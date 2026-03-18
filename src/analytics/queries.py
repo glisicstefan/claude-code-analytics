@@ -497,3 +497,69 @@ def get_error_breakdown() -> pd.DataFrame:
     except Exception:
         logger.exception("get_error_breakdown failed")
         raise
+
+
+# ---------------------------------------------------------------------------
+# Tool decision breakdown
+# ---------------------------------------------------------------------------
+
+
+def get_tool_decision_breakdown() -> pd.DataFrame:
+    """Return counts of tool events grouped by decision_source.
+
+    Useful for understanding how often tools are accepted via config,
+    user_temporary approval, or user_reject.
+
+    Columns:
+        decision_source (str): the source of the accept/reject decision.
+        count (int): number of events with that decision_source.
+
+    Returns:
+        :class:`pandas.DataFrame` ordered by count descending.
+    """
+    sql = """
+        SELECT
+            decision_source,
+            COUNT(*) AS count
+        FROM tool_events
+        WHERE decision_source IS NOT NULL
+        GROUP BY decision_source
+        ORDER BY count DESC
+    """
+    try:
+        return _query(sql)
+    except Exception:
+        logger.exception("get_tool_decision_breakdown failed")
+        raise
+
+
+# ---------------------------------------------------------------------------
+# Sessions per user
+# ---------------------------------------------------------------------------
+
+
+def get_sessions_per_user() -> pd.DataFrame:
+    """Return the number of distinct sessions per user.
+
+    Useful for identifying power users vs casual users.
+
+    Columns:
+        user_email (str): user identifier.
+        session_count (int): number of distinct sessions for that user.
+
+    Returns:
+        :class:`pandas.DataFrame` ordered by session_count descending.
+    """
+    sql = """
+        SELECT
+            user_email,
+            COUNT(DISTINCT session_id) AS session_count
+        FROM api_requests
+        GROUP BY user_email
+        ORDER BY session_count DESC
+    """
+    try:
+        return _query(sql)
+    except Exception:
+        logger.exception("get_sessions_per_user failed")
+        raise
