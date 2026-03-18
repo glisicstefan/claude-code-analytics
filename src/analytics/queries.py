@@ -120,16 +120,18 @@ def get_daily_activity() -> pd.DataFrame:
 
 
 def get_tokens_by_practice() -> pd.DataFrame:
-    """Return total token consumption broken down by employee practice.
+    """Return average token consumption per user broken down by employee practice.
 
     Joins ``api_requests`` with ``employees`` on ``user_email = email``.
 
     Columns:
         practice (str): e.g. ``ML Engineering``, ``Backend Engineering``.
         total_tokens (int): sum of all four token columns.
+        user_count (int): number of distinct users in that practice.
+        avg_tokens_per_user (float): total_tokens / user_count.
 
     Returns:
-        :class:`pandas.DataFrame` ordered by total_tokens descending.
+        :class:`pandas.DataFrame` ordered by avg_tokens_per_user descending.
     """
     sql = """
         SELECT
@@ -139,11 +141,19 @@ def get_tokens_by_practice() -> pd.DataFrame:
                 + COALESCE(r.output_tokens, 0)
                 + COALESCE(r.cache_read_tokens, 0)
                 + COALESCE(r.cache_create_tokens, 0)
-            ) AS total_tokens
+            )                                           AS total_tokens,
+            COUNT(DISTINCT r.user_email)                AS user_count,
+            CAST(SUM(
+                COALESCE(r.input_tokens, 0)
+                + COALESCE(r.output_tokens, 0)
+                + COALESCE(r.cache_read_tokens, 0)
+                + COALESCE(r.cache_create_tokens, 0)
+            ) AS REAL) / NULLIF(COUNT(DISTINCT r.user_email), 0)
+                                                        AS avg_tokens_per_user
         FROM api_requests AS r
         LEFT JOIN employees AS e ON r.user_email = e.email
         GROUP BY e.practice
-        ORDER BY total_tokens DESC
+        ORDER BY avg_tokens_per_user DESC
     """
     try:
         return _query(sql)
@@ -158,16 +168,18 @@ def get_tokens_by_practice() -> pd.DataFrame:
 
 
 def get_tokens_by_level() -> pd.DataFrame:
-    """Return total token consumption broken down by employee seniority level.
+    """Return average token consumption per user broken down by employee seniority level.
 
     Joins ``api_requests`` with ``employees`` on ``user_email = email``.
 
     Columns:
         level (str): e.g. ``L1``, ``L5``, ``L10``.
         total_tokens (int): sum of all four token columns.
+        user_count (int): number of distinct users at that level.
+        avg_tokens_per_user (float): total_tokens / user_count.
 
     Returns:
-        :class:`pandas.DataFrame` ordered by total_tokens descending.
+        :class:`pandas.DataFrame` ordered by avg_tokens_per_user descending.
     """
     sql = """
         SELECT
@@ -177,11 +189,19 @@ def get_tokens_by_level() -> pd.DataFrame:
                 + COALESCE(r.output_tokens, 0)
                 + COALESCE(r.cache_read_tokens, 0)
                 + COALESCE(r.cache_create_tokens, 0)
-            ) AS total_tokens
+            )                                           AS total_tokens,
+            COUNT(DISTINCT r.user_email)                AS user_count,
+            CAST(SUM(
+                COALESCE(r.input_tokens, 0)
+                + COALESCE(r.output_tokens, 0)
+                + COALESCE(r.cache_read_tokens, 0)
+                + COALESCE(r.cache_create_tokens, 0)
+            ) AS REAL) / NULLIF(COUNT(DISTINCT r.user_email), 0)
+                                                        AS avg_tokens_per_user
         FROM api_requests AS r
         LEFT JOIN employees AS e ON r.user_email = e.email
         GROUP BY e.level
-        ORDER BY total_tokens DESC
+        ORDER BY avg_tokens_per_user DESC
     """
     try:
         return _query(sql)

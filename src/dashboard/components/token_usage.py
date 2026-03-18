@@ -66,7 +66,7 @@ def _load_cache_hit_rate():
 
 
 def _render_tokens_by_practice(filters: Dict[str, Any]) -> None:
-    """Render horizontal bar chart: total tokens by practice."""
+    """Render horizontal bar chart: avg tokens per user by practice."""
     df = _load_tokens_by_practice()
 
     if df.empty:
@@ -82,21 +82,27 @@ def _render_tokens_by_practice(filters: Dict[str, Any]) -> None:
         return
 
     n = len(df)
-    st.markdown(f"**Tokens by Practice** (n={n})")
+    st.markdown(f"**Avg Tokens per User by Practice** (n={n})")
 
     fig = go.Figure(
         go.Bar(
-            x=df["total_tokens"],
+            x=df["avg_tokens_per_user"],
             y=df["practice"],
             orientation="h",
             marker_color="#636EFA",
-            text=df["total_tokens"].apply(lambda v: f"{v:,}"),
+            text=df["avg_tokens_per_user"].apply(lambda v: f"{v:,.0f}"),
             textposition="auto",
+            customdata=df["user_count"],
+            hovertemplate=(
+                "<b>%{y}</b><br>"
+                "Avg tokens/user: %{x:,.0f}<br>"
+                "Users: %{customdata}<extra></extra>"
+            ),
         )
     )
     fig.update_layout(
         template="plotly_dark",
-        xaxis_title="Total Tokens",
+        xaxis_title="Avg Tokens per User",
         yaxis_title="Practice",
         margin={"t": 30, "b": 40},
         height=350,
@@ -105,7 +111,7 @@ def _render_tokens_by_practice(filters: Dict[str, Any]) -> None:
 
 
 def _render_tokens_by_level(filters: Dict[str, Any]) -> None:
-    """Render horizontal bar chart: total tokens by seniority level (L1→L10)."""
+    """Render horizontal bar chart: avg tokens per user by seniority level (L1→L10)."""
     df = _load_tokens_by_level()
 
     if df.empty:
@@ -116,32 +122,32 @@ def _render_tokens_by_level(filters: Dict[str, Any]) -> None:
     if selected:
         df = df[df["level"].isin(selected)]
 
-    # Sort levels L1 → L10
-    df["_sort"] = df["level"].apply(
-        lambda lvl: _LEVEL_ORDER.index(lvl) if lvl in _LEVEL_ORDER else 999
-    )
-    df = df.sort_values("_sort").drop(columns=["_sort"])
-
     if df.empty:
         st.info("No data for the selected levels.")
         return
 
     n = len(df)
-    st.markdown(f"**Tokens by Seniority Level** (n={n})")
+    st.markdown(f"**Avg Tokens per User by Seniority Level** (n={n})")
 
     fig = go.Figure(
         go.Bar(
-            x=df["total_tokens"],
+            x=df["avg_tokens_per_user"],
             y=df["level"],
             orientation="h",
             marker_color="#EF553B",
-            text=df["total_tokens"].apply(lambda v: f"{v:,}"),
+            text=df["avg_tokens_per_user"].apply(lambda v: f"{v:,.0f}"),
             textposition="auto",
+            customdata=df["user_count"],
+            hovertemplate=(
+                "<b>%{y}</b><br>"
+                "Avg tokens/user: %{x:,.0f}<br>"
+                "Users: %{customdata}<extra></extra>"
+            ),
         )
     )
     fig.update_layout(
         template="plotly_dark",
-        xaxis_title="Total Tokens",
+        xaxis_title="Avg Tokens per User",
         yaxis_title="Level",
         margin={"t": 30, "b": 40},
         height=350,
