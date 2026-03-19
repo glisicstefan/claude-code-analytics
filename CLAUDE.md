@@ -241,16 +241,3 @@ Track all significant AI assistance here for the deliverable.
 |---|---|---|---|---|
 | 1 | Claude Code | ... | ... | ... |
 
----
-
-## Current Status
-
-- [ ] Data generated
-- [ ] Parser implemented
-- [ ] DB schema created and loaded
-- [ ] Analytics queries written
-- [ ] Dashboard running locally
-- [ ] README complete
-- [ ] Anomaly detection (bonus)
-- [ ] FastAPI endpoints (bonus)
-- [ ] Presentation slides
