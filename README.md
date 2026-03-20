@@ -68,8 +68,8 @@
 ### 1. Clone the repository
 
 ```bash
-git clone <repository-url>
-cd claude_code_analyitics
+git clone https://github.com/glisicstefan/claude-code-analytics
+cd claude_code_analytics
 ```
 
 ### 2. Create and activate a virtual environment
@@ -163,6 +163,16 @@ claude_code_analyitics/
 │
 ├── api/
 │   └── main.py                      # FastAPI app with 8 REST endpoints
+│
+├── docs/
+│   ├── claude-code-insights.pdf     # Data insights presentation
+│   └── screenshots/                 # Dashboard screenshot images
+│       ├── overview.png
+│       ├── token&cost.png
+│       ├── tool_analysis.png
+│       ├── usage_patterns_heatmap.png
+│       ├── anomalies.png
+│       └── api.png
 │
 ├── scripts/
 │   └── pipeline.py                  # One-shot: generate → ingest → load
