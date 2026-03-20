@@ -213,14 +213,14 @@ claude_code_analyitics/
 
 | Method | Endpoint                | Description                              |
 |--------|-------------------------|------------------------------------------|
-| GET    | `/sessions`             | List sessions with filters               |
-| GET    | `/sessions/{id}`        | Single session detail                    |
-| GET    | `/users/top`            | Top users by cost or token usage         |
-| GET    | `/tools/usage`          | Tool frequency and success rates         |
-| GET    | `/cost/breakdown`       | Cost breakdown by practice and level     |
+| GET    | `/health`               | Health check                             |
+| GET    | `/overview`             | Aggregate KPIs (cost, tokens, sessions)  |
+| GET    | `/users/top-cost`       | Top users by total cost                  |
+| GET    | `/tokens/by-practice`   | Token usage broken down by practice      |
+| GET    | `/tokens/by-level`      | Token usage broken down by seniority     |
+| GET    | `/tools/success-rates`  | Tool frequency and success rates         |
+| GET    | `/errors/breakdown`     | API error log with status codes          |
 | GET    | `/anomalies`            | Anomalous sessions from Isolation Forest |
-| GET    | `/metrics/overview`     | Aggregate KPIs (cost, tokens, sessions)  |
-| GET    | `/errors`               | API error log with status codes          |
 
 Full interactive documentation: `http://localhost:8000/docs`
 
@@ -247,13 +247,13 @@ Full interactive documentation: `http://localhost:8000/docs`
 ![Overview](docs/screenshots/overview.png)
 
 ### Dashboard — Token & Cost Analysis
-![Anomalies](docs/screenshots/token&cost.png)
+![Token&Cost](docs/screenshots/token&cost.png)
 
 ### Dashboard — Tool Analysis
-![Anomalies](docs/screenshots/tool_analysis.png)
+![ToolAnalysis](docs/screenshots/tool_analysis.png)
 
 ### Dashboard — Usage Patterns
-![Anomalies](docs/screenshots/usage_patterns_heatmap.png)
+![UsagePatterns](docs/screenshots/usage_patterns_heatmap.png)
 
 ### Dashboard — Anomalies
 ![Anomalies](docs/screenshots/anomalies.png)
